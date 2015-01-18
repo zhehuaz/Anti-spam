@@ -1,2 +1,2 @@
 # Anti-spam
-A spam filter implemented with Bayers Method.
+A spam filter implemented with Bayes Method.
