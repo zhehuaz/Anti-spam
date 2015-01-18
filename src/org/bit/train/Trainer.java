@@ -14,7 +14,6 @@ public class Trainer {
 
 	
 	/** contains words shown in mail,and the P(S|w) of each word is of Double*/
-	private HashMap<String, Double> words;
 	private DictAccess dictAccess;
 	
 	/** sort P(S|w) of words in <code>HashMap<String,Double> words</code> */
@@ -23,6 +22,8 @@ public class Trainer {
 		// TODO sort words by P(S|w)
 		
 	}
+	
+	
 	
 	/** 
 	 * @param mail is intend for training
