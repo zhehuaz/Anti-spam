@@ -3,32 +3,42 @@ package org.bit.mail;
 import java.util.HashMap;
 
 public abstract class Mail {
+	/** FIXME The procedure is wired. new() -> parse()(sub) -> load()(super) */
 	
-	private long ID;
-	private String text;
+	
+	private long id;
+	private String content;
 	
 	/**	load text of mail body */
 	public abstract int parseText(String input);
 
 	private HashMap<String,Double> wordsProb;
 	
+	private int loadWords()
+	{
+		// TODO be careful when text == null
+		// TODO load words into HashMap from parseText()
+		
+		return 0;
+	}
+	
 	public HashMap<String, Double> getWordsProb() {
 		return wordsProb;
 	}
 
-	public long getID() {
-		return ID;
+	public long getId() {
+		return id;
 	}
 
-	public void setID(long iD) {
-		ID = iD;
+	public void setId(long id) {
+		this.id = id;
 	}
 
-	public String getText() {
-		return text;
+	public String getContent() {
+		return content;
 	}
 
-	public void setText(String text) {
-		this.text = text;
+	public void setContent(String content) {
+		this.content = content;
 	}
 }

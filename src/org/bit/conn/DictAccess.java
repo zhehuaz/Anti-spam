@@ -4,7 +4,7 @@ import java.sql.Connection;
 
 public class DictAccess {
 
-	// TODO when to turn this off???
+	// FIXME when to turn this off???
 	private Connection conn;
 	
 }

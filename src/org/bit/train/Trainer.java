@@ -28,12 +28,11 @@ public class Trainer {
 	/** 
 	 * @param mail is intend for training
 	 * @param tag marks whether this mail is spam or not.<code>TRUE</code> means it is.
-	 * @return word number of mail
-	 * 
+	 * @return number of words in mail
 	 * */
 	public int train(Mail mail,boolean tag)
 	{
-		// TODO train using `words`
+		// TODO be careful the sequence : mail -> parse(get text body of mail) -> load()
 		// TODO for UNTRAIN and RETRAIN ,remember to save mails you've trained!!!
 		return 0;
 	}
