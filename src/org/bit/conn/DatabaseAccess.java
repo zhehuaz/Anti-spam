@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 public interface DatabaseAccess {
 
-	public int CreateDatabase();
+	public int createDatabase();
 
 	
 }
