@@ -17,7 +17,7 @@ import java.util.List;
 * */
 public interface DictAccess extends DatabaseAccess{
 	
-	enum DictDataIndex{INDEX_WORD, INDEX_FREQUENCY };
+	enum DictDataIndex{BLANK, INDEX_WORD, INDEX_FREQUENCY };
 	
 	public int createTableDict();
 	public HashMap<String,Integer> query(boolean tag, boolean isInsert, List<String> wordlist);

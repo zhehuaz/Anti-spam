@@ -12,7 +12,7 @@ import java.util.List;
 import org.bit.mail.Email;
 import org.bit.mail.Mail;
 
-public class MysqlAccess extends Thread implements DictAccess,MailAccess{
+public class MysqlAccess implements DictAccess,MailAccess{
 	/** 
 	 * Driver of Mysql is:com.mysql.jdbc.Driver
 	 * */
@@ -30,6 +30,8 @@ public class MysqlAccess extends Thread implements DictAccess,MailAccess{
 	final static private String NORMAL_DICT_TABLE_NAME = "Normal_Dictionary";
 	final static private String MAIL_TABLE_NAME = "Mail";
 	
+	final static private boolean debugMode = false;
+	
 	private Statement statement;
 	
 	private String url;
@@ -46,16 +48,16 @@ public class MysqlAccess extends Thread implements DictAccess,MailAccess{
 	public Connection getConnection()
 	{
 		try {
-			Class.forName(DRIVER);
+			Class.forName("com.mysql.jdbc.Driver");
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 		try {
 			conn = DriverManager.getConnection(url, user, password);
-			System.out.println("Database connection success");
+			System.out.println("Database connection success");	
 		} catch (SQLException e) {
 			e.printStackTrace();
-			System.out.println("Datavase connection failure");
+			System.out.println("Database connection failure");
 		}
 		return conn;
 	}
@@ -67,6 +69,8 @@ public class MysqlAccess extends Thread implements DictAccess,MailAccess{
 	public int createDatabase() {		
 		Connection conn = getConnection();
 		String createStatement = "CREATE DATABASE Spam_Data";
+		if(debugMode)
+			System.out.println(createStatement);
 		try {
 			statement = conn.createStatement();
 			statement.executeUpdate(createStatement);
@@ -103,32 +107,38 @@ public class MysqlAccess extends Thread implements DictAccess,MailAccess{
 	public int createTableDict() {
 		
 		Connection conn = getConnection();
-		String createSpamDictStatement = "CREATE TABLE " + SPAM_DICT_TABLE_NAME
-				 	+	"Dict_id INT(10) AUTO_INCREMENT,"
+		String createSpamDictStatement = "CREATE TABLE IF NOT EXISTS " + SPAM_DICT_TABLE_NAME
+				 	+	" ( Dict_id INT(10) AUTO_INCREMENT,"
 				 	+	"Dict_word VARCHAR(50) UNIQUE NOT NULL,"
 				 	+	"Dict_frequency INT(15) UNSIGNED NOT NULL,"
 				 	+	"PRIMARY KEY(Dict_id)"
 				 	+ 	" )DEFAULT CHARSET=utf8";
-		String createNormalDictStatement = "CREATE TABLE " + NORMAL_DICT_TABLE_NAME
-			 	+	"Dict_id INT(10) AUTO_INCREMENT,"
+		String createNormalDictStatement = "CREATE TABLE IF NOT EXISTS " + NORMAL_DICT_TABLE_NAME
+			 	+	" ( Dict_id INT(10) AUTO_INCREMENT,"
 			 	+	"Dict_word VARCHAR(50) UNIQUE NOT NULL,"
 			 	+	"Dict_frequency INT(15) UNSIGNED NOT NULL,"
 			 	+	"PRIMARY KEY(Dict_id)"
 			 	+ 	" )DEFAULT CHARSET=utf8";
-		String addSumRecordInSpamDict = "INSERT INTO " + SPAM_DICT_TABLE_NAME + " (Dict_word, Dict_frequency) values($sumName, 0)";
-		String addSumRecordInNormalDict = "INSERT INTO " + NORMAL_DICT_TABLE_NAME + " (Dict_word, Dict_frequency) values($sumName, 0)";
+		String 	insertSumRecordInSpamDict = "INSERT INTO " + SPAM_DICT_TABLE_NAME + " (Dict_word, Dict_frequency) VALUES ('" +  SUM_NAME + "', 0)"
+				+ "ON DUPLICATE KEY UPDATE Dict_frequency = Dict_frequency";
+		String insertSumRecordInNormalDict = "INSERT INTO " + NORMAL_DICT_TABLE_NAME + " (Dict_word, Dict_frequency) VALUES ('" +  SUM_NAME + "', 0)"
+				+ "ON DUPLICATE KEY UPDATE Dict_frequency = Dict_frequency";
+		if(debugMode)
+		{
+			System.out.println(createNormalDictStatement);
+			System.out.println(createSpamDictStatement);
+			System.out.println(insertSumRecordInNormalDict);
+			System.out.println(insertSumRecordInSpamDict);
+		}
 		try {
 			statement = conn.createStatement();
 			statement.executeUpdate(createSpamDictStatement);
 			statement.executeUpdate(createNormalDictStatement);
-			statement.executeUpdate(addSumRecordInNormalDict);//I don't need to use insert()
-			statement.executeUpdate(addSumRecordInSpamDict);
+			statement.executeUpdate(insertSumRecordInNormalDict);//I don't need to use insert()
+			statement.executeUpdate(insertSumRecordInSpamDict);
 			statement.close();
 			conn.close();
 		} catch (SQLException e) {
-			if(e.getErrorCode() == ERROR_CODE_TABLE_ALREADY_EXISTED)
-				System.out.println("Table already exists");
-			System.out.println("create table dict failed");
 			e.printStackTrace();
 		}
 		
@@ -146,11 +156,16 @@ public class MysqlAccess extends Thread implements DictAccess,MailAccess{
 	@Override
 	public int createTableMail() {		
 		Connection conn = getConnection();
-		String createStatement = "CREATE TABLE " + MAIL_TABLE_NAME +" (" + 
-				"Mail_ID INTERGER AUTO_INCREMENT PRIMARY KEY,"+
+		String createStatement = "CREATE TABLE IF NOT EXISTS " + MAIL_TABLE_NAME +" (" + 
+				"Mail_id INT(12) AUTO_INCREMENT,"+
 				"Mail_content TEXT," + 
-				"Mail_tag BOOL" + //if the mail is spam
+				"Mail_tag BOOL," + //if the mail is spam
+				"PRIMARY KEY(Mail_id)" +
 				 ")";
+		if(debugMode)
+		{
+			System.out.println(createStatement);
+		}
 		try {
 			statement = conn.createStatement();
 			statement.executeUpdate(createStatement);
@@ -166,7 +181,7 @@ public class MysqlAccess extends Thread implements DictAccess,MailAccess{
 	
 	/**
 	 * 
-	 * SELECT Dict_frequency WHERE Dict_word = $word FROM $TABLENAME;
+	 * SELECT * WHERE Dict_word = $word FROM $TABLENAME;
 	 * 
 	 * Query frequency of each words from Dict database 
 	 * @param tag query from `spam_dict` or `normal_dict` ,true stands for `spam_dict`
@@ -177,36 +192,40 @@ public class MysqlAccess extends Thread implements DictAccess,MailAccess{
 	@Override
 	public HashMap<String, Integer> query(boolean tag, boolean isInsert, List<String> wordlist) {
 		Connection conn = getConnection();
+		wordlist.add(SUM_NAME);
 		Iterator<String> worditer = wordlist.iterator();
 		String tableName = tag == true? SPAM_DICT_TABLE_NAME : NORMAL_DICT_TABLE_NAME;
 		ResultSet rs = null;
 		String thisWord = null;
-		HashMap<String,Integer> hashResult = null;
-		
-		try {
-			statement = conn.createStatement();
-			rs = statement.executeQuery("SELECT Dict_frequency WHERE Dict_word = " + SUM_NAME + " FROM " + tableName);
-			hashResult.put(SUM_NAME, rs.getInt(2));
-		} catch (SQLException e1) {
-			System.out.println("Get sum error");
-			e1.printStackTrace();
-		}
+		HashMap<String,Integer> hashResult = new HashMap<String,Integer>();
+		String queryStatement = null;
 				
 		while(worditer.hasNext())
 		{
 			thisWord = worditer.next();
+			queryStatement = "SELECT * FROM " + tableName + " WHERE Dict_word = '" + thisWord + "'" ;
+			if(debugMode)
+				System.out.println(queryStatement);
 			try {
-				rs = statement.executeQuery("SELECT Dict_frequency WHERE Dict_word = " + thisWord + " FROM " + tableName);
-				//FIXME index here is not standard
-				hashResult.put(thisWord, rs.getInt(DictDataIndex.INDEX_FREQUENCY.ordinal()));
-				
-			} catch (SQLException e) {
-				if(e.getErrorCode() == ERROR_CODE_RECORD_NOT_EXISTED)//if no this word
+				statement = conn.createStatement();
+				rs = statement.executeQuery(queryStatement);
+				boolean hasNext = rs.next();
+				if(debugMode)
+					System.out.println(hasNext);
+				if(!hasNext)
 				{
-					System.out.println("no word : " + thisWord);
+					System.out.println("no this word : " + thisWord);
 					if(isInsert)
+					{
 						insert(tag, thisWord);
+						hashResult.put(thisWord, 1);
+					}
 				}
+				else
+				{
+					hashResult.put(thisWord, rs.getInt("Dict_frequency"));
+				}
+			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		}
@@ -234,13 +253,18 @@ public class MysqlAccess extends Thread implements DictAccess,MailAccess{
 		String tableName = tag == true ? SPAM_DICT_TABLE_NAME : NORMAL_DICT_TABLE_NAME;
 		String insertStatement = "INSERT INTO " + tableName + " (Dict_word, Dict_frequency) VALUES ('" +  word + "', 1)"
 				+ "ON DUPLICATE KEY UPDATE Dict_frequency = Dict_frequency + 1";
-		String addSumRecord = "UPDATE " + tableName + "SET Dict_frequency = Dict_frequency + 1 " + "WHERE Dict_word = " + SUM_NAME;//sum ++
+		String addSumRecord = "UPDATE " + tableName + " SET Dict_frequency = Dict_frequency + 1 " + "WHERE Dict_word = '" + SUM_NAME + "'";//sum ++
+		if(debugMode)
+		{
+			System.out.println(insertStatement);
+			System.out.println(addSumRecord);
+		}
 		
 		try {
 			statement.executeUpdate(insertStatement);
 			statement.executeUpdate(addSumRecord);
 		} catch (SQLException e) {
-			System.out.println(word + "Insert " + word + " Failed");
+			System.out.println(word + "Insert Failed");
 			e.printStackTrace();
 			return 1;
 		}
@@ -291,6 +315,10 @@ public class MysqlAccess extends Thread implements DictAccess,MailAccess{
 		String tableName = tag == true ? SPAM_DICT_TABLE_NAME : NORMAL_DICT_TABLE_NAME;
 		String deleteStatement = "INSERT INTO " + tableName + " (Dict_word, Dict_frequency) VALUES ('" + word + "', 0)"
 		  		+ "ON DUPLICATE KEY UPDATE Dict_frequency = Dict_frquency - 1";
+		if(debugMode)
+		{
+			System.out.println(deleteStatement);
+		}
 		try {
 			statement = conn.createStatement();
 			statement.execute(deleteStatement);
@@ -342,6 +370,10 @@ public class MysqlAccess extends Thread implements DictAccess,MailAccess{
 	public int delete(Mail mail) {
 		conn = getConnection();
 		String deleteStatement = "DELETE FROM " + MAIL_TABLE_NAME + "WHERE Mail_ID = " + mail.getId();
+		if(debugMode)
+		{
+			System.out.println(deleteStatement);
+		}
 		try {
 			statement = conn.createStatement();
 			statement.executeUpdate(deleteStatement);
@@ -365,9 +397,12 @@ public class MysqlAccess extends Thread implements DictAccess,MailAccess{
 	@Override
 	public int insert(Mail mail) {
 		conn = getConnection();
-		String insertStatement = "INSERT INTO " + MAIL_TABLE_NAME + " values( " + mail.getId() + ", " + mail.getContent() + ", " + 
+		String insertStatement = "INSERT INTO " + MAIL_TABLE_NAME + " values( " + mail.getId() + ", '" + mail.getContent() + "', " + 
 				mail.isTag() + ")" ;
-		
+		if(debugMode)
+		{
+			System.out.println(insertStatement);	
+		}
 		try {
 			statement = conn.createStatement();
 			statement.executeUpdate(insertStatement);
@@ -392,6 +427,10 @@ public class MysqlAccess extends Thread implements DictAccess,MailAccess{
 		String queryStatement = "SELECT * FROM " + MAIL_TABLE_NAME + " WHERE Mail_ID = " + ID;
 		Mail mail = new Email();
 		ResultSet rs;
+		if(debugMode)
+		{
+			System.out.println(queryStatement);
+		}
 		
 		try {
 			statement = conn.createStatement();
