@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.bit.servlet;
+package org.bit.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
