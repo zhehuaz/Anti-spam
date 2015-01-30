@@ -8,6 +8,7 @@ public abstract class Mail {
 	
 	private long id;
 	private String content;
+	private boolean tag;//if this mail is spam
 	
 	/**	load text of mail body */
 	public abstract int parseText(String input);
@@ -24,6 +25,14 @@ public abstract class Mail {
 	
 	public HashMap<String, Double> getWordsProb() {
 		return wordsProb;
+	}
+
+	public boolean isTag() {
+		return tag;
+	}
+
+	public void setTag(boolean tag) {
+		this.tag = tag;
 	}
 
 	public long getId() {

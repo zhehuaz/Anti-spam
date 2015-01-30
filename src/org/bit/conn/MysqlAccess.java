@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.bit.mail.Email;
 import org.bit.mail.Mail;
 
 public class MysqlAccess extends Thread implements DictAccess,MailAccess{
@@ -125,24 +126,19 @@ public class MysqlAccess extends Thread implements DictAccess,MailAccess{
 
 	/**
 	 * CREATE TABLE Mail(
-	 * 		Mail_ID INTERGER PRIMARY KEY,
+	 * 		Mail_ID INTERGER AUTO_INCREMENT PRIMARY KEY,
 	 * 		Mail_content TEXT,
-	 * 		Mail_tag BOOL,
-	 * 		Mail_author TEXT,
-	 * 		Mail_subject TEXT,
-	 * 		Mail_date DATE
+	 * 		Mail_tag BOOL
 	 * );
 	 * */
 	@Override
 	public int createTableMail() {		
 		Connection conn = getConnection();
 		String createStatement = "CREATE TABLE " + MAIL_TABLE_NAME +" (" + 
-				"Mail_ID INTERGER PRIMARY KEY,"+
+				"Mail_ID INTERGER AUTO_INCREMENT PRIMARY KEY,"+
 				"Mail_content TEXT," + 
-				"Mail_tag BOOL," + //if the mail is spam
-				"Mail_author TEXT," + 
-				"Mail_subject TEXT," + 
-				"Mail_date DATE" + ")";
+				"Mail_tag BOOL" + //if the mail is spam
+				 ")";
 		try {
 			statement = conn.createStatement();
 			statement.executeUpdate(createStatement);
@@ -190,7 +186,7 @@ public class MysqlAccess extends Thread implements DictAccess,MailAccess{
 			try {
 				rs = statement.executeQuery("SELECT Dict_frequency WHERE Dict_word == " + thisWord + " FROM " + tableName);
 				//FIXME index here is not standard
-				hashResult.put(thisWord, rs.getInt(2));
+				hashResult.put(thisWord, rs.getInt(DictDataIndex.INDEX_FREQUENCY.ordinal()));
 				
 			} catch (SQLException e) {
 				if(e.getErrorCode() == ERROR_CODE_RECORD_NOT_EXISTED)//if no this word
@@ -293,6 +289,9 @@ public class MysqlAccess extends Thread implements DictAccess,MailAccess{
 		return 0;
 	}
 	
+	/**
+	 * delete a list of words
+	 * */
 	@Override
 	public int delete(boolean tag,List<String> word)
 	{
@@ -321,27 +320,77 @@ public class MysqlAccess extends Thread implements DictAccess,MailAccess{
 
 	
 	/**
-	 * Mail database 
+	 * DELETE FROM $table where Mail_ID == $ID;
+	 * 
+	 * Mail database
+	 * delete method should avoid user from missing to delete words in words_dict. 
 	 * */
 	@Override
 	public int delete(Mail mail) {
-		// TODO Auto-generated method stub
+		conn = getConnection();
+		String deleteStatement = "DELETE FROM " + MAIL_TABLE_NAME + "WHERE Mail_ID == " + mail.getId();
+		try {
+			statement = conn.createStatement();
+			statement.executeUpdate(deleteStatement);
+			statement.close();
+			conn.close();
+		} catch (SQLException e) {
+			System.out.println("delete mail failed");
+			e.printStackTrace();
+			return 1;
+		}
 		return 0;
 	}
-
-	@Override
-	public int insert(Mail mail) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int modify(Mail mail) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-
 
 	
+	/**
+	 * INSERT INTO $table values($ID, $content, $tag);
+	 * 
+	 * ATTENTION: In the database, ($author, $subject, $date) of Email is not stored.
+	 * insert a mail into mail table
+	 * */
+	@Override
+	public int insert(Mail mail) {
+		conn = getConnection();
+		String insertStatement = "INSERT INTO " + MAIL_TABLE_NAME + " values( " + mail.getId() + ", " + mail.getContent() + ", " + 
+				mail.isTag() + ")" ;
+		
+		try {
+			statement = conn.createStatement();
+			statement.executeUpdate(insertStatement);
+			statement.close();
+			conn.close();
+		} catch (SQLException e) {
+			System.out.println("insert mail failed");
+			e.printStackTrace();
+		}	
+		return 0;
+	}
+
+	
+	/**
+	 * SELECT * FROM $table WHERE Mail_ID == $ID;
+	 * 
+	 * search a mail from database by ID
+	 * */
+	@Override
+	public Mail query(int ID) {
+		conn = getConnection();
+		String queryStatement = "SELECT * FROM " + MAIL_TABLE_NAME + " WHERE Mail_ID == " + ID;
+		Mail mail = new Email();
+		ResultSet rs;
+		
+		try {
+			statement = conn.createStatement();
+			rs = statement.executeQuery(queryStatement);
+			mail.setContent(rs.getString(MailDataIndex.INDEX_CONTENT.ordinal()));
+			mail.setTag(rs.getBoolean(MailDataIndex.INDEX_TAG.ordinal()));
+			mail.setId(ID);
+		} catch (SQLException e) {
+			if(e.getErrorCode() == ERROR_CODE_RECORD_NOT_EXISTED)
+				System.out.printf("No the mail :" + ID);
+			e.printStackTrace();
+		}	
+		return mail;
+	}
 }
