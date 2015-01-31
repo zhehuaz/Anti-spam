@@ -13,6 +13,15 @@ import org.lionsoul.jcseg.core.SegmentFactory;
 
 public class SegmentWords{
 	
+	public static void trim(String sentence){
+		
+	}
+	
+	
+	
+	/**
+	 * @praram sentence this sentence should be pure,which has no segments like "<tag>" or "\n".
+	 * */
 	public static ArrayList<String> segment(String sentence) throws JcsegException, IOException{		
 		ArrayList<String> words = new ArrayList<String>();
 		JcsegTaskConfig config = new JcsegTaskConfig(null);
