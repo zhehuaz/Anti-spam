@@ -17,7 +17,7 @@ public interface MailAccess extends DatabaseAccess{
 	enum MailDataIndex {BLANK, INDEX_ID, INDEX_CONTENT, INDEX_TAG};
 	
 	public int createTableMail();
-	public Mail query(int ID);
+	public Mail query(long ID);
 	public int delete(Mail mail);
 	public int insert(Mail mail);
 	

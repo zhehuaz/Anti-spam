@@ -30,7 +30,7 @@ public class MysqlAccess implements DictAccess,MailAccess{
 	final static private String NORMAL_DICT_TABLE_NAME = "Normal_Dictionary";
 	final static private String MAIL_TABLE_NAME = "Mail";
 	
-	final static private boolean debugMode = false;
+	final static private boolean debugMode = true;
 	
 	private Statement statement;
 	
@@ -48,13 +48,14 @@ public class MysqlAccess implements DictAccess,MailAccess{
 	public Connection getConnection()
 	{
 		try {
-			Class.forName("com.mysql.jdbc.Driver");
+			Class.forName(DRIVER);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 		try {
 			conn = DriverManager.getConnection(url, user, password);
-			System.out.println("Database connection success");	
+			if(debugMode)
+				System.out.println("Database connection success");	
 		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("Database connection failure");
@@ -151,7 +152,7 @@ public class MysqlAccess implements DictAccess,MailAccess{
 	 * 		Mail_content TEXT,
 	 * 		Mail_tag BOOL,
 	 * 		PRIMARY KEY(Mail_id)
-	 * );
+	 * )DEFAULT CHARSET=utf8;
 	 * */
 	@Override
 	public int createTableMail() {		
@@ -161,7 +162,7 @@ public class MysqlAccess implements DictAccess,MailAccess{
 				"Mail_content TEXT," + 
 				"Mail_tag BOOL," + //if the mail is spam
 				"PRIMARY KEY(Mail_id)" +
-				 ")";
+				 ")DEFAULT CHARSET=utf8";
 		if(debugMode)
 		{
 			System.out.println(createStatement);
@@ -361,7 +362,7 @@ public class MysqlAccess implements DictAccess,MailAccess{
 
 	
 	/**
-	 * DELETE FROM $table where Mail_ID = $ID;
+	 * DELETE FROM $table where Mail_id = $ID;
 	 * 
 	 * Mail database
 	 * delete method should avoid user from missing to delete words in words_dict. 
@@ -369,7 +370,7 @@ public class MysqlAccess implements DictAccess,MailAccess{
 	@Override
 	public int delete(Mail mail) {
 		conn = getConnection();
-		String deleteStatement = "DELETE FROM " + MAIL_TABLE_NAME + "WHERE Mail_ID = " + mail.getId();
+		String deleteStatement = "DELETE FROM " + MAIL_TABLE_NAME + "WHERE Mail_id = " + mail.getId();
 		if(debugMode)
 		{
 			System.out.println(deleteStatement);
@@ -389,7 +390,9 @@ public class MysqlAccess implements DictAccess,MailAccess{
 
 	
 	/**
-	 * INSERT INTO $table values($ID, $content, $tag);
+	 * INSERT INTO $table (Mail_content, Mail_tag) values($content, $tag);
+	 * 
+	 * SELECT LAST_INSERT_ID();
 	 * 
 	 * ATTENTION: In the database, ($author, $subject, $date) of Email is not stored.
 	 * insert a mail into mail table
@@ -397,8 +400,12 @@ public class MysqlAccess implements DictAccess,MailAccess{
 	@Override
 	public int insert(Mail mail) {
 		conn = getConnection();
-		String insertStatement = "INSERT INTO " + MAIL_TABLE_NAME + " values( " + mail.getId() + ", '" + mail.getContent() + "', " + 
-				mail.isTag() + ")" ;
+		String insertStatement = "INSERT INTO "+ MAIL_TABLE_NAME + " (Mail_content, Mail_tag) values(\n" + 
+				"'" + mail.getContent() + "',\n"
+						 + (mail.isSpam() == true ? "true" : "false") +")";
+		String queryIdStatement = "SELECT LAST_INSERT_ID()";
+		ResultSet rs;
+		
 		if(debugMode)
 		{
 			System.out.println(insertStatement);	
@@ -406,6 +413,10 @@ public class MysqlAccess implements DictAccess,MailAccess{
 		try {
 			statement = conn.createStatement();
 			statement.executeUpdate(insertStatement);
+			rs = statement.executeQuery(queryIdStatement);
+			if(rs.next())
+				mail.setId(rs.getLong("LAST_INSERT_ID()"));
+			
 			statement.close();
 			conn.close();
 		} catch (SQLException e) {
@@ -417,14 +428,14 @@ public class MysqlAccess implements DictAccess,MailAccess{
 
 	
 	/**
-	 * SELECT * FROM $table WHERE Mail_ID = $ID;
+	 * SELECT * FROM $table WHERE Mail_id = $ID;
 	 * 
 	 * search a mail from database by ID
 	 * */
 	@Override
-	public Mail query(int ID) {
+	public Mail query(long ID) {
 		conn = getConnection();
-		String queryStatement = "SELECT * FROM " + MAIL_TABLE_NAME + " WHERE Mail_ID = " + ID;
+		String queryStatement = "SELECT * FROM " + MAIL_TABLE_NAME + " WHERE Mail_id = " + ID;
 		Mail mail = new Email();
 		ResultSet rs;
 		if(debugMode)
@@ -435,12 +446,21 @@ public class MysqlAccess implements DictAccess,MailAccess{
 		try {
 			statement = conn.createStatement();
 			rs = statement.executeQuery(queryStatement);
-			mail.setContent(rs.getString(MailDataIndex.INDEX_CONTENT.ordinal()));
-			mail.setTag(rs.getBoolean(MailDataIndex.INDEX_TAG.ordinal()));
-			mail.setId(ID);
+			boolean hasNext = rs.next();
+			if(debugMode)
+				System.out.println(hasNext);
+			if(hasNext)
+			{
+				mail.setContent(rs.getString(MailDataIndex.INDEX_CONTENT.ordinal()));
+				mail.setTag(rs.getBoolean(MailDataIndex.INDEX_TAG.ordinal()));
+				mail.setId(ID);
+			}
+			else
+			{
+				System.out.println("No Mail whose id is :" + ID);
+			}
 		} catch (SQLException e) {
-			if(e.getErrorCode() == ERROR_CODE_RECORD_NOT_EXISTED)
-				System.out.printf("No the mail :" + ID);
+
 			e.printStackTrace();
 		}	
 		return mail;
