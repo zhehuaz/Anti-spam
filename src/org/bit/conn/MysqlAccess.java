@@ -18,7 +18,7 @@ public class MysqlAccess implements DictAccess,MailAccess{
 	 * */
 	static Connection conn;
 	final static private String DRIVER = "com.mysql.jdbc.Driver";
-	final static private String SUM_NAME = "^S^U^M^";
+	final static public String SUM_NAME = "^S^U^M^";
 	
 	final static private int ERROR_CODE_RECORD_NOT_EXISTED = 1032;
 	final static private int ERROR_CODE_DATABASE_NOT_EXISTED = 1049;
@@ -38,11 +38,12 @@ public class MysqlAccess implements DictAccess,MailAccess{
 	private String user;
 	private String password;
 	
-	MysqlAccess(String url,String user,String password)
-	{
+	public MysqlAccess(String url,String user,String password) throws SQLException{
 		this.url = url;
 		this.user = user;
 		this.password = password;
+		if(getConnection() == null)
+			throw new SQLException();
 	}
 	
 	public Connection getConnection()
@@ -58,7 +59,6 @@ public class MysqlAccess implements DictAccess,MailAccess{
 				System.out.println("Database connection success");	
 		} catch (SQLException e) {
 			e.printStackTrace();
-			System.out.println("Database connection failure");
 		}
 		return conn;
 	}
@@ -78,7 +78,6 @@ public class MysqlAccess implements DictAccess,MailAccess{
 			statement.close();
 			conn.close();
 		} catch (SQLException e) {
-			System.out.println("create database failed");
 			e.printStackTrace();
 		}
 		return 0;
@@ -221,6 +220,8 @@ public class MysqlAccess implements DictAccess,MailAccess{
 						insert(tag, thisWord);
 						hashResult.put(thisWord, 1);
 					}
+					else
+						hashResult.put(thisWord, 0);
 				}
 				else
 				{

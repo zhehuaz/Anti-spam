@@ -17,15 +17,13 @@ public class Email extends Mail{
 	 * Assume that input is already content. 
 	 * */
 	@Override
-	public ArrayList<String> parseText(String input) {
-		ArrayList<String> list = null;
+	public void parseText(String input) {
 		try {
-			list = SegmentWords.segment(input);
+			wordlist = SegmentWords.segment(input);
 		} catch (JcsegException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return list;
 	}
 
 }

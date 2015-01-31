@@ -1,8 +1,11 @@
 package org.bit.train;
 
-import java.util.HashMap;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.bit.conn.DictAccess;
+import org.bit.conn.MysqlAccess;
 import org.bit.mail.Mail;
 
 public class Trainer {
@@ -10,37 +13,36 @@ public class Trainer {
 	/** 
 	 * This class works as a trainer,which contains series of methods implements Bayes Method.
 	 * P(S|w) means the probability that the mail is spam in condition that word `w` show up in it.
+	 * @parame driver,url,user,password A trainer is suppose to know the information to obtain the access to database of dictionary. 
+	 * @throws SQLException 
 	 * */
-
+	Trainer(String driver,String url,String user,String password) throws SQLException,UnknownDBException{
+		switch(driver){
+		case "com.mysql.jdbd.Driver": dictAccess =  new MysqlAccess(url,user,password);break;
+		default: dictAccess = null;throw new UnknownDBException("Database type Unknown");
+		}
+	}
 	
 	/** contains words shown in mail,and the P(S|w) of each word is of Double*/
 	private DictAccess dictAccess;
 	
-	/** sort P(S|w) of words in <code>HashMap<String,Double> words</code> */
-	private void sortProbabilityOfWords()
-	{
-		// TODO sort words by P(S|w)
-		
-	}
-	
-	
-	
 	/** 
+	 * train with a mail but don't save it
 	 * @param mail is intend for training
-	 * @param tag marks whether this mail is spam or not.<code>TRUE</code> means it is.
 	 * @return number of words in mail
 	 * */
-	public int train(Mail mail,boolean tag)
+	public int train(Mail mail)
 	{
-		// TODO be careful the sequence : mail -> parse(get text body of mail) -> load()
-		// TODO for UNTRAIN and RETRAIN ,remember to save mails you've trained!!!
+		dictAccess.insert(mail.isSpam(),mail.getWordlist());
 		return 0;
 	}
 	
-	/** If the `tag` is incorrect,undo the train...And retrain :D */
+	/** If the `tag` is incorrect,undo the train...
+	 * @param mail REMEBER mail's tag is NEW tag,after retrain.
+	 * */
 	public int untrain(Mail mail)
 	{
-		
+		dictAccess.delete(!mail.isSpam(), mail.getWordlist());
 		return 0;
 	}
 }

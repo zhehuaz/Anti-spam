@@ -2,6 +2,7 @@ package org.bit.conn;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,8 +16,9 @@ public class DatabaseTest {
 
 	/**
 	 * This is only a test file for `MysqlAccess.java`.
+	 * @throws SQLException 
 	 * */
-	public static void main(String [] args)
+	public static void main(String [] args) throws SQLException
 	{
 		Properties prop = new Properties();
 		try {

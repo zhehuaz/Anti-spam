@@ -1,16 +1,21 @@
 package org.bit.mail;
 
-import java.util.ArrayList;
+import java.io.IOException;
+
+import org.bit.util.SegmentWords;
+import org.lionsoul.jcseg.core.JcsegException;
+
 
 public class ShortMessage extends Mail{
 
 	@Override
-	public ArrayList<String> parseText(String input) {
-		// TODO Auto-generated method stub
-		ArrayList<String> list = null;
-		
-		
-		return list;
+	public void parseText(String input) {
+		// TODO directly generate and store wordlist in thid method
+		try {
+			wordlist = SegmentWords.segment(input);
+		} catch (JcsegException | IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

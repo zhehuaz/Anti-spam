@@ -9,16 +9,14 @@ public abstract class Mail {
 	private String content;//not trimmed
 	private boolean tag;//if this mail is spam
 	private String from;//sender of the mail
+	protected ArrayList<String> wordlist;
 	
-	/*static word into word-list from text of mail */
-	public abstract ArrayList<String> parseText(String input);
-
-	/*store probability of each word*/
-	private HashMap<String,Double> wordsProb;
-	
-	public HashMap<String, Double> getWordsProb() {
-		return wordsProb;
+	public ArrayList<String> getWordlist() {
+		return wordlist;
 	}
+
+	/*static word into word-list from text of mail */
+	public abstract void parseText(String input);
 
 	public boolean isSpam() {
 		return tag;
