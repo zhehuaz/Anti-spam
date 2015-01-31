@@ -8,10 +8,11 @@ public class Email extends Mail{
 	String author;
 	Date date;
 	
+	/**
+	 * Assume that input is already content. 
+	 * */
 	@Override
 	public int parseText(String input) {
-		// TODO Auto-generated method stub
-		
 		
 		return 0;
 	}
