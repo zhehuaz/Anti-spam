@@ -1,28 +1,20 @@
 package org.bit.mail;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public abstract class Mail {
-	/** FIXME The procedure is wired. new() -> parse()(sub) -> load()(super) */
-	
 	
 	private long id;
-	private String content;
+	private String content;//not trimmed
 	private boolean tag;//if this mail is spam
 	private String from;//sender of the mail
 	
-	/**	load text of mail body */
-	public abstract int parseText(String input);
+	/*static word into word-list from text of mail */
+	public abstract ArrayList<String> parseText(String input);
 
+	/*store probability of each word*/
 	private HashMap<String,Double> wordsProb;
-	
-	private int loadWords()
-	{
-		// TODO be careful when text == null
-		// TODO load words into HashMap from parseText()
-		
-		return 0;
-	}
 	
 	public HashMap<String, Double> getWordsProb() {
 		return wordsProb;
@@ -50,5 +42,13 @@ public abstract class Mail {
 
 	public void setContent(String content) {
 		this.content = content;
+	}
+
+	public String getFrom() {
+		return from;
+	}
+
+	public void setFrom(String from) {
+		this.from = from;
 	}
 }
