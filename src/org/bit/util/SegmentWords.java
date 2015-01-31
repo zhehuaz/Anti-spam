@@ -13,7 +13,15 @@ import org.lionsoul.jcseg.core.SegmentFactory;
 
 public class SegmentWords{
 	
-	public static ArrayList<String> segment(String sentence) throws JcsegException, IOException{		
+	public static void trim(String sentence){
+		//TODO to cut tags
+	}
+	
+	/**
+	 * @praram sentence this sentence should be pure,which has no tag like "<tag>" or "\n".
+	 * */
+	public static ArrayList<String> segment(String sentence) throws JcsegException, IOException{
+		trim(sentence);
 		ArrayList<String> words = new ArrayList<String>();
 		JcsegTaskConfig config = new JcsegTaskConfig(null);
 		ADictionary dic = DictionaryFactory.createDefaultDictionary(config);
