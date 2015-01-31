@@ -13,6 +13,9 @@ import org.bit.mail.Mail;
 
 public class DatabaseTest {
 
+	/**
+	 * This is only a test file for `MysqlAccess.java`.
+	 * */
 	public static void main(String [] args)
 	{
 		Properties prop = new Properties();
