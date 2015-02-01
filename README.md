@@ -16,10 +16,10 @@ Bayes Method
 * An email certainly contains more than one word :
  ><img src="http://latex.codecogs.com/gif.latex?P(S|w_{i})&space;=&space;\frac{P(w_{i}|S)P(S)}{P(w_{i}|S)P(S)&space;&plus;&space;P(w_{i}|N)P(N)}" title="P(S|w_{i}) = \frac{P(w_{i}|S)P(S)}{P(w_{i}|S)P(S) + P(w_{i}|N)P(N)}" />
  
-* Consider comprehensively, calculate combining probability :
+* Consider comprehensively, calculate combining probability(  Here we assume that <img src="http://latex.codecogs.com/gif.latex?S|w_{i}" title="S|w_{i}" /> are independent) :
 ><img src="http://latex.codecogs.com/gif.latex?P&space;=&space;\frac{P(S)\prod&space;P(S|w_{i})}{P(S)\prod&space;P(S|w_{i})&space;&plus;&space;(1&space;-&space;P(S))\prod(1&space;-&space;P(S|w_{i}))}" title="P = \frac{P(S)\prod P(S|w_{i})}{P(S)\prod P(S|w_{i}) + (1 - P(S))\prod(1 - P(S|w_{i}))}" />
 
-*  Here we assume that <img src="http://latex.codecogs.com/gif.latex?S|w_{i}" title="S|w_{i}" /> are independent,so the formula above can be simplified as:
+* Further more,we assume <img src="http://latex.codecogs.com/gif.latex?P(S)=50\%" title="P(S)=50\%" />, so the formula above can be simplified as:
 ><img src="http://latex.codecogs.com/gif.latex?P&space;=&space;\frac{\prod&space;P(S|w_{i})}{\prod&space;P(S|w_{i})&space;&plus;&space;\prod&space;(1&space;-&space;P(S|w_{i}))}" title="P = \frac{\prod P(S|w_{i})}{\prod P(S|w_{i}) + \prod (1 - P(S|w_{i}))}" />	
 
 * I'm using this formula to detect emails in this program.
