@@ -1,5 +1,6 @@
 package org.bit.classify;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -12,6 +13,7 @@ import org.bit.conn.DictAccess;
 import org.bit.conn.MysqlAccess;
 import org.bit.mail.Mail;
 import org.bit.train.Trainer;
+import org.bit.train.UnknownDBException;
 
 public class Classify {
 	
@@ -23,6 +25,13 @@ public class Classify {
 	private final static double PROB_IF_NOT_EXISTS_IN_NORMAL = 0.01;
 	private final static int WORD_CONTAIN = 20;//how many top words you want
 	private final static double THRESHOLD_OF_SPAM = 0.9;
+	
+	Classify(String driver,String url,String user,String password) throws UnknownDBException, SQLException{
+		switch(driver){
+		case "com.mysql.jdbc.Driver": dictAccess = new MysqlAccess(url,user,password);break;
+		default: dictAccess = null;throw new UnknownDBException("Database type Unknown");
+		}
+	}
 	
 	/**
 	 * Calculate P(S|w) = (P(w|S)P(S)) / (P(w|S)P(S) + P(w|N)P(N))
@@ -93,9 +102,11 @@ public class Classify {
 	/** Classify the Mail
 	 * @return <code>TRUE</code> means the mail is spam
 	 * */
-	public boolean Classcify(Mail mail)
+	public boolean classify(Mail mail)
 	{
 		// TODO train the dic after classify a mail 
+		mail.parseText();
+		
 		HashMap<String,Integer> rsOfSpam = dictAccess.query(true, true, mail.getWordlist());
 		HashMap<String,Integer> rsOfNormal = dictAccess.query(false, false, mail.getWordlist());
 		
