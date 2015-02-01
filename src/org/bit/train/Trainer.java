@@ -18,7 +18,7 @@ public class Trainer {
 	 * */
 	Trainer(String driver,String url,String user,String password) throws SQLException,UnknownDBException{
 		switch(driver){
-		case "com.mysql.jdbd.Driver": dictAccess =  new MysqlAccess(url,user,password);break;
+		case "com.mysql.jdbc.Driver": dictAccess =  new MysqlAccess(url,user,password);break;
 		default: dictAccess = null;throw new UnknownDBException("Database type Unknown");
 		}
 	}
@@ -33,6 +33,7 @@ public class Trainer {
 	 * */
 	public int train(Mail mail)
 	{
+		mail.parseText();//remember to parse !!!
 		dictAccess.insert(mail.isSpam(),mail.getWordlist());
 		return 0;
 	}

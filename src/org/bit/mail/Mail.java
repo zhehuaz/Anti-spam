@@ -6,7 +6,7 @@ import java.util.HashMap;
 public abstract class Mail {
 	
 	private long id;
-	private String content;//not trimmed
+	protected String content;//not trimmed
 	private boolean tag;//if this mail is spam
 	private String from;//sender of the mail
 	protected ArrayList<String> wordlist;
@@ -16,7 +16,7 @@ public abstract class Mail {
 	}
 
 	/*static word into word-list from text of mail */
-	public abstract void parseText(String input);
+	public abstract void parseText();
 
 	public boolean isSpam() {
 		return tag;

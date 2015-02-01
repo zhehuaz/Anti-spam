@@ -17,9 +17,9 @@ public class Email extends Mail{
 	 * Assume that input is already content. 
 	 * */
 	@Override
-	public void parseText(String input) {
+	public void parseText() {
 		try {
-			wordlist = SegmentWords.segment(input);
+			wordlist = SegmentWords.segment(content);
 		} catch (JcsegException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

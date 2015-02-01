@@ -69,7 +69,7 @@ public class DatabaseTest {
 		ma.createTableMail();
 		
 		Mail mail = new Email();
-		mail.setContent("<br><br>发货清单：<br>1，南孚5号电池：4节。<br>2，南孚7号电池：2节<br><br>一共0.94元，&nbsp;需要拍2个套餐产品。<br><br>套餐1：南孚5号电池：4节，0.88元。&nbsp;&nbsp;<a href=\"http://url7.me/kuEv\" target=\"_blank\">http://url7.<wbr>me/kuEv</a><br>套餐2：南孚7号电池：2节，0.06元。&nbsp;&nbsp;<a href=\"http://url7.me/gEFv\" target=\"_blank\">http://url7.<wbr>me/gEFv</a><br><br>&nbsp;<br>请&nbsp;把这2个套餐&nbsp;全拍了&nbsp;。我们一起给你发货.&nbsp;<br><br><br>冲皇冠，大促销，确保正品。&nbsp;请收到货好评。<br><br><br>");
+		mail.setContent("发货清单：1，南孚5号电池：4节。2，南孚7号电池：2节  一共0.94元，  ;需要拍2个套餐产品。套餐1：南孚5号电池：4节，0.88元。 套餐2：南孚7号电池：2节，0.06元。http://url7.me/gEFv  请把这2个套餐全拍了。我们一起给你发货. 冲皇冠，大促销，确保正品。请收到货好评。");
 		mail.setTag(true);
 		ma.insert(mail);
 		Mail getMail = ma.query(mail.getId());

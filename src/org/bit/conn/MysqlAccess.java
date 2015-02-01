@@ -30,7 +30,7 @@ public class MysqlAccess implements DictAccess,MailAccess{
 	final static private String NORMAL_DICT_TABLE_NAME = "Normal_Dictionary";
 	final static private String MAIL_TABLE_NAME = "Mail";
 	
-	final static private boolean debugMode = true;
+	final static private boolean debugMode = false;
 	
 	private Statement statement;
 	

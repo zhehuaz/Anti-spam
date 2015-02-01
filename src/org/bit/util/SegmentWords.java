@@ -14,7 +14,7 @@ import org.lionsoul.jcseg.core.SegmentFactory;
 public class SegmentWords{
 	
 	public static void trim(String sentence){
-		//TODO to cut tags
+		//TODO to cut tags and '\n'
 	}
 	
 	/**
