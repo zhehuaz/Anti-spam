@@ -21,14 +21,10 @@ public class httpTest extends HttpServlet {
 			throws ServletException, IOException {
 		resp.setContentType("text/html");
 		PrintWriter out = resp.getWriter();
-		out.println("Hello,world.");
+		out.println("<html>");
+		out.println("<body>");
+		out.println("<p>Hello, world.</p>");
+		out.println("</body>");
+		out.println("</html>");
 	}
-
-	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		super.doPost(req, resp);
-	}
-
-	
 }
