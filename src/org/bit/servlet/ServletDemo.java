@@ -27,7 +27,16 @@ public class ServletDemo extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		resp.setContentType("text/html");
-		userAccess = new UserAccess("jdbc:mysql://localhost:3306/test","langley", "");
+		Properties prop = new Properties();
+		try {
+			prop.load(new FileInputStream(getServletContext().getRealPath("/sqlInfo.ini")));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		String url = prop.getProperty("url");
+		String user = prop.getProperty("user");
+		String password = prop.getProperty("password");
+		userAccess = new UserAccess(url,user,password);
 		
 		PrintWriter out = resp.getWriter();
 		out.println("<html>");

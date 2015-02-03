@@ -25,7 +25,7 @@ public class UserAccess{
 	boolean check(String checkUser,String checkPassword) throws SQLException
 	{
 		MysqlAccess conn = new MysqlAccess(this.url, this.user, this.password);
-		String statement = "SELECT * FROM " + USER_TABLE_NAME + " WHERE (user = '" + checkUser  + "'&& password = '" + checkPassword + "')";
+		String statement = "SELECT * FROM " + USER_TABLE_NAME + " WHERE (user = '" + checkUser  + "' && password = '" + checkPassword + "')";
 		ResultSet rs = conn.query(statement);
 		if(rs.next())
 			return true;

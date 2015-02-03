@@ -1,4 +1,4 @@
-package org.bit.classify;
+package org.bit.classifyer;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -10,15 +10,17 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.bit.conn.DictAccess;
+import org.bit.conn.MailAccess;
 import org.bit.conn.MysqlAccess;
 import org.bit.mail.Mail;
 import org.bit.train.Trainer;
 import org.bit.train.UnknownDBException;
 
-public class Classify {
+public class Classifyer {
 	
 	DictAccess dictAccess;
 	Trainer trainer;
+	MailAccess mailAccess;
 	private final static double INF = 1e-5; 
 	private final static double PROB_OF_SPAM = 0.5;
 	private final static double PROB_OF_NORMAL = 0.5;
@@ -26,7 +28,7 @@ public class Classify {
 	private final static int WORD_CONTAIN = 20;//how many top words you want
 	private final static double THRESHOLD_OF_SPAM = 0.9;
 	
-	Classify(String driver,String url,String user,String password) throws UnknownDBException, SQLException{
+	public Classifyer(String driver,String url,String user,String password) throws UnknownDBException, SQLException{
 		switch(driver){
 		case "com.mysql.jdbc.Driver": dictAccess = new MysqlAccess(url,user,password);break;
 		default: dictAccess = null;throw new UnknownDBException("Database type Unknown");

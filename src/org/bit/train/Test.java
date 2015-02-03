@@ -24,7 +24,7 @@ public class Test {
 		try {
 			Trainer trainer = new Trainer("com.mysql.jdbc.Driver",url,user,password);
 			MailAccess mailHelper = new MysqlAccess(url, user, password);
-			trainer.train(mailHelper.query(5));
+			trainer.train(mailHelper.query(5),false);
 		} catch (SQLException | UnknownDBException e) {
 			e.printStackTrace();
 		}

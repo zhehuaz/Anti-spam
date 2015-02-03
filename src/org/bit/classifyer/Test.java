@@ -1,4 +1,4 @@
-package org.bit.classify;
+package org.bit.classifyer;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -23,7 +23,7 @@ public class Test {
 		String user = prop.getProperty("user");
 		String password = prop.getProperty("password");
 		try {
-			Classify classify = new Classify("com.mysql.jdbc.Driver", url, user, password);
+			Classifyer classify = new Classifyer("com.mysql.jdbc.Driver", url, user, password);
 			mailAccess = new MysqlAccess(url, user, password);
 			System.out.println("This mail is " + (classify.classify(mailAccess.query(7)) ? "Spam" : "Healthy") + ".");
 		} catch (UnknownDBException | SQLException e) {

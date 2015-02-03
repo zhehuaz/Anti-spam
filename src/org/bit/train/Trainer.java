@@ -1,10 +1,9 @@
 package org.bit.train;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.bit.conn.DictAccess;
+import org.bit.conn.MailAccess;
 import org.bit.conn.MysqlAccess;
 import org.bit.mail.Mail;
 
@@ -16,25 +15,30 @@ public class Trainer {
 	 * @parame driver,url,user,password A trainer is suppose to know the information to obtain the access to database of dictionary. 
 	 * @throws SQLException 
 	 * */
-	Trainer(String driver,String url,String user,String password) throws SQLException,UnknownDBException{
+	public Trainer(String driver,String url,String user,String password) throws SQLException,UnknownDBException{
 		switch(driver){
-		case "com.mysql.jdbc.Driver": dictAccess =  new MysqlAccess(url,user,password);break;
+		case "com.mysql.jdbc.Driver": dictAccess =  new MysqlAccess(url,user,password);
+									mailAccess = new MysqlAccess(url,user,password);
+											break;
 		default: dictAccess = null;throw new UnknownDBException("Database type Unknown");
 		}
 	}
 	
 	/** contains words shown in mail,and the P(S|w) of each word is of Double*/
 	private DictAccess dictAccess;
+	private MailAccess mailAccess;
 	
 	/** 
-	 * train with a mail but don't save it
+	 * train with a mail but can optional save it
 	 * @param mail is intend for training
 	 * @return number of words in mail
 	 * */
-	public int train(Mail mail)
+	public int train(Mail mail,boolean isSave)
 	{
 		mail.parseText();//remember to parse !!!
 		dictAccess.insert(mail.isSpam(),mail.getWordlist());
+		if(isSave)
+			mailAccess.insert(mail);
 		return 0;
 	}
 	
