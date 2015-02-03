@@ -466,4 +466,15 @@ public class MysqlAccess implements DictAccess,MailAccess{
 		}	
 		return mail;
 	}
+	
+	public ResultSet query(String execuStatement) throws SQLException{
+		conn = getConnection();
+		if(debugMode)
+		{
+			System.out.println(statement);
+		}
+		this.statement = conn.createStatement();
+		return statement.executeQuery(execuStatement); 
+
+	}
 }

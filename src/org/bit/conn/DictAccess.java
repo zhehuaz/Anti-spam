@@ -13,7 +13,6 @@ import java.util.List;
 * 		Dict_word TEXT UNIQUE NOT NULL,
 * 		Dict_frequency INTEGER UNSIGNED NOT NULL;
 * );
-*
 * */
 public interface DictAccess extends DatabaseAccess{
 	
