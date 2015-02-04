@@ -10,7 +10,7 @@ public class ShortMessage extends Mail{
 
 	@Override
 	public void parseText() {
-		// TODO directly generate and store wordlist in thid method
+		
 		try {
 			wordlist = SegmentWords.segment(content);
 		} catch (JcsegException | IOException e) {

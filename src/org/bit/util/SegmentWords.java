@@ -13,6 +13,8 @@ import org.lionsoul.jcseg.core.SegmentFactory;
 
 public class SegmentWords{
 	
+	private final static String propPath = "/home/langley/Install/apache-tomcat-8.0.17/webapps/Anti-Spam/WEB-INF/lib/jcseg.properties";
+	
 	public static void trim(String sentence){
 		//TODO to cut tags and '\n'
 	}
@@ -23,7 +25,7 @@ public class SegmentWords{
 	public static ArrayList<String> segment(String sentence) throws JcsegException, IOException{
 		trim(sentence);
 		ArrayList<String> words = new ArrayList<String>();
-		JcsegTaskConfig config = new JcsegTaskConfig(null);
+		JcsegTaskConfig config = new JcsegTaskConfig(propPath);
 		ADictionary dic = DictionaryFactory.createDefaultDictionary(config);
 		ISegment seg = SegmentFactory.createJcseg(JcsegTaskConfig.COMPLEX_MODE , new Object[]{config,dic});
 		seg.reset(new StringReader(sentence));
