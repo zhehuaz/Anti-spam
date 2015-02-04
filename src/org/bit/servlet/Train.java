@@ -25,7 +25,8 @@ public class Train extends HttpServlet{
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		resp.setContentType("text/html");
+		resp.setContentType("text/html;charset=UTF-8");
+		req.setCharacterEncoding("UTF-8");
 		Properties prop = new Properties();
 		try {
 			prop.load(new FileInputStream(getServletContext().getRealPath("/sqlInfo.ini")));
@@ -39,6 +40,7 @@ public class Train extends HttpServlet{
 		try {
 			trainer = new Trainer("com.mysql.jdbc.Driver",url,user,password);
 			mail = new Email();
+			System.out.println(req.getParameter("content"));
 			mail.setContent(req.getParameter("content"));
 			if(req.getParameter("isSpam").equals("true"))
 				mail.setTag(true);
