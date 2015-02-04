@@ -40,7 +40,9 @@ public class Train extends HttpServlet{
 		try {
 			trainer = new Trainer("com.mysql.jdbc.Driver",url,user,password);
 			mail = new Email();
-			System.out.println(req.getParameter("content"));
+			String str = req.getParameter("content");
+			System.out.println(str);
+			//System.out.println(req.getParameter("content"));
 			mail.setContent(req.getParameter("content"));
 			if(req.getParameter("isSpam").equals("true"))
 				mail.setTag(true);
