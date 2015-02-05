@@ -64,9 +64,7 @@ public class Trainer {
 	}
 	
 	public int untrain(long id){
-		
-		
-		
+		untrain(mailAccess.query(id));
 		return 0;
 	}
 }

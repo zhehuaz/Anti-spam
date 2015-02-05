@@ -28,9 +28,14 @@ public class Untrain extends HttpServlet{
 		try {
 			trainer = new Trainer("com.mysql.jdbc.Driver",getServletContext().getRealPath("/sqlInfo.ini"),
 					getServletContext().getRealPath("/sqlInfo.ini"));
-			trainer.untrain(Integer.parseInt(req.getParameter("Mail_ID")));
+			long id = Long.parseLong(req.getParameter("Mail_ID"));
+			trainer.untrain(id);
+			new MysqlAccess(getServletContext().getRealPath("/sqlInfo.ini")).delete(id);
+			resp.getWriter().println("Success!");
+			
 		} catch (UnknownDBException | SQLException e) {
 			e.printStackTrace();
+			resp.getWriter().println("Fail.");
 		}
 		
 		

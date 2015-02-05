@@ -18,7 +18,7 @@ public interface MailAccess extends DatabaseAccess{
 	
 	public int createTableMail();
 	public Mail query(long ID);
-	public int delete(Mail mail);
+	public int delete(long ID);
 	public int insert(Mail mail);
 	
 }

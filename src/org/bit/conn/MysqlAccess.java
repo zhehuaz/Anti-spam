@@ -386,9 +386,9 @@ public class MysqlAccess implements DictAccess,MailAccess{
 	 * delete method should avoid user from missing to delete words in words_dict. 
 	 * */
 	@Override
-	public int delete(Mail mail) {
+	public int delete(long ID) {
 		conn = getConnection();
-		String deleteStatement = "DELETE FROM " + MAIL_TABLE_NAME + "WHERE Mail_id = " + mail.getId();
+		String deleteStatement = "DELETE FROM " + MAIL_TABLE_NAME + "WHERE Mail_id = " + ID;
 		if(debugMode)
 		{
 			System.out.println(deleteStatement);
