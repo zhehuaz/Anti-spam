@@ -1,5 +1,7 @@
 package org.bit.classifyer;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,6 +33,14 @@ public class Classifyer {
 	public Classifyer(String driver,String url,String user,String password) throws UnknownDBException, SQLException{
 		switch(driver){
 		case "com.mysql.jdbc.Driver": dictAccess = new MysqlAccess(url,user,password);break;
+		default: dictAccess = null;throw new UnknownDBException("Database type Unknown");
+		}
+	}
+	
+	public Classifyer(String driver,String dictAccessPropPath) throws UnknownDBException, FileNotFoundException, IOException, SQLException
+	{
+		switch(driver){
+		case "com.mysql.jdbc.Driver": dictAccess = new MysqlAccess(dictAccessPropPath);break;
 		default: dictAccess = null;throw new UnknownDBException("Database type Unknown");
 		}
 	}

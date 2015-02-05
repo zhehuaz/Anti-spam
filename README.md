@@ -24,4 +24,4 @@ Bayes Method
 
 * I'm using this formula to detect emails in this program.
 
-Here are more [details](http://www.paulgraham.com/spam.html) of spam filtering, [fundamental knowledge](http://www.mathpages.com/home/kmath267.htm) of Combining Probability and [Bayes theorem](http://en.wikipedia.org/wiki/Bayes%27_theorem).
+Here are more details of [spam filtering](http://www.paulgraham.com/spam.html) ,fundamental knowledge of [Combining Probability](http://www.mathpages.com/home/kmath267.htm) and [Bayes theorem](http://en.wikipedia.org/wiki/Bayes%27_theorem).

@@ -1,5 +1,7 @@
 package org.bit.train;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.SQLException;
 
 import org.bit.conn.DictAccess;
@@ -22,6 +24,16 @@ public class Trainer {
 											break;
 		default: dictAccess = null;throw new UnknownDBException("Database type Unknown");
 		}
+	}
+	
+	public Trainer(String driver,String dictAccessPropPath,String mailAccessPropPath) throws UnknownDBException, FileNotFoundException, IOException, SQLException{
+		switch(driver){
+		case "com.mysql.jdbc.Driver": this.dictAccess = new MysqlAccess(dictAccessPropPath);
+									this.mailAccess = new MysqlAccess(mailAccessPropPath);
+											break;
+		default: dictAccess = null;throw new UnknownDBException("Database type Unknown");
+		}
+		
 	}
 	
 	/** contains words shown in mail,and the P(S|w) of each word is of Double*/
@@ -48,6 +60,13 @@ public class Trainer {
 	public int untrain(Mail mail)
 	{
 		dictAccess.delete(!mail.isSpam(), mail.getWordlist());
+		return 0;
+	}
+	
+	public int untrain(long id){
+		
+		
+		
 		return 0;
 	}
 }

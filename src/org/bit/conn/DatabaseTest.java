@@ -1,6 +1,7 @@
 package org.bit.conn;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -17,19 +18,12 @@ public class DatabaseTest {
 	/**
 	 * This is only a test file for `MysqlAccess.java`.
 	 * @throws SQLException 
+	 * @throws IOException 
+	 * @throws FileNotFoundException 
 	 * */
-	public static void main(String [] args) throws SQLException
+	public static void main(String [] args) throws SQLException, FileNotFoundException, IOException
 	{
-		Properties prop = new Properties();
-		try {
-			prop.load(new FileInputStream("sqlInfo.ini"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		String url = prop.getProperty("url");
-		String user = prop.getProperty("user");
-		String password = prop.getProperty("password");
-		MysqlAccess ma = new MysqlAccess(url,user,password);
+		MysqlAccess ma = new MysqlAccess("sqlInfo.ini");
 		/*HashMap<String,Integer> frequency;
 		ma.createTableDict();
 		ma.createTableMail();

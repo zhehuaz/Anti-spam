@@ -1,5 +1,8 @@
 package org.bit.conn;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -8,6 +11,9 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
+
+import javax.servlet.http.HttpServlet;
 
 import org.bit.mail.Email;
 import org.bit.mail.Mail;
@@ -37,6 +43,17 @@ public class MysqlAccess implements DictAccess,MailAccess{
 	private String url;
 	private String user;
 	private String password;
+	
+	public MysqlAccess(String propFilePath) throws FileNotFoundException, IOException, SQLException{
+		Properties prop = new Properties();
+		prop.load(new FileInputStream(propFilePath));
+
+		this.url = prop.getProperty("url");
+		this.user = prop.getProperty("user");
+		this.password = prop.getProperty("password");
+		if(getConnection() == null)
+			throw new SQLException();
+	}
 	
 	public MysqlAccess(String url,String user,String password) throws SQLException{
 		this.url = url;
