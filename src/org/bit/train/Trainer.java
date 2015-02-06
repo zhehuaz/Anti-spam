@@ -54,12 +54,12 @@ public class Trainer {
 		return 0;
 	}
 	
-	/** If the `tag` is incorrect,undo the train...
-	 * @param mail REMEBER mail's tag is NEW tag,after retrain.
+	/** If the classify result is incorrect,undo the train...
+	 * @param mail REMEBER mail's tag is OLD tag,before retrain.
 	 * */
 	public int untrain(Mail mail)
 	{
-		dictAccess.delete(!mail.isSpam(), mail.getWordlist());
+		dictAccess.delete(mail.isSpam(), mail.getWordlist());
 		return 0;
 	}
 	

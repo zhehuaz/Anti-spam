@@ -34,7 +34,6 @@ public class Train extends HttpServlet{
 			mail = new Email();
 			String str = req.getParameter("content");
 			System.out.println(str);
-			//System.out.println(req.getParameter("content"));
 			mail.setContent(req.getParameter("content"));
 			if(req.getParameter("isSpam").equals("true"))
 				mail.setTag(true);

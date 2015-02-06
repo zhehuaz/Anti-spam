@@ -454,7 +454,7 @@ public class MysqlAccess implements DictAccess,MailAccess{
 	public Mail query(long ID) {
 		conn = getConnection();
 		String queryStatement = "SELECT * FROM " + MAIL_TABLE_NAME + " WHERE Mail_id = " + ID;
-		Mail mail = new Email();
+		Mail mail = null;
 		ResultSet rs;
 		if(debugMode)
 		{
@@ -469,6 +469,7 @@ public class MysqlAccess implements DictAccess,MailAccess{
 				System.out.println(hasNext);
 			if(hasNext)
 			{
+				mail = new Email();
 				mail.setContent(rs.getString(MailDataIndex.INDEX_CONTENT.ordinal()));
 				mail.setTag(rs.getBoolean(MailDataIndex.INDEX_TAG.ordinal()));
 				mail.setId(ID);
@@ -494,4 +495,5 @@ public class MysqlAccess implements DictAccess,MailAccess{
 		return statement.executeQuery(execuStatement); 
 
 	}
+
 }

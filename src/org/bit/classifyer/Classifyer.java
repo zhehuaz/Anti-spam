@@ -22,7 +22,6 @@ public class Classifyer {
 	
 	DictAccess dictAccess;
 	Trainer trainer;
-	MailAccess mailAccess;
 	private final static double INF = 1e-5; 
 	private final static double PROB_OF_SPAM = 0.5;
 	private final static double PROB_OF_NORMAL = 0.5;

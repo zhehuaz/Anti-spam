@@ -12,10 +12,9 @@ import org.bit.conn.MysqlAccess;
 import org.bit.train.Trainer;
 import org.bit.train.UnknownDBException;
 
-public class Untrain extends HttpServlet{
-	
+public class Delete extends HttpServlet{
 	/**
-	 * Untrain a mail that is mistakenly classified.
+	 * Delete a mail from database.
 	 * */
 	Trainer trainer;
 
@@ -30,11 +29,19 @@ public class Untrain extends HttpServlet{
 					getServletContext().getRealPath("/sqlInfo.ini"));
 			long id = Long.parseLong(req.getParameter("Mail_ID"));
 			trainer.untrain(id);
-			resp.getWriter().println("Untrain Success!");
+			new MysqlAccess(getServletContext().getRealPath("/sqlInfo.ini")).delete(id);
+			resp.getWriter().println("Delete Success!");
 			
 		} catch (UnknownDBException | SQLException e) {
 			e.printStackTrace();
-			resp.getWriter().println("Utrain Fail.");
+			resp.getWriter().println("Delete Fail.");
 		}
+		
+		
+		
+		
+		
+		
 	}
+	
 }

@@ -23,7 +23,8 @@ public class Classify extends HttpServlet{
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		resp.setContentType("text/html");
+		resp.setContentType("text/html;charset=UTF-8");
+		req.setCharacterEncoding("UTF-8");
 	
 		try {
 			classifyer = new Classifyer("com.mysql.jdbc.Driver", getServletContext().getRealPath("/sqlInfo.ini"));
