@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServlet;
 
 import org.bit.mail.Email;
 import org.bit.mail.Mail;
+import org.lionsoul.jcseg.DetectSeg;
 
 public class MysqlAccess implements DictAccess,MailAccess{
 	/** 
@@ -261,7 +262,7 @@ public class MysqlAccess implements DictAccess,MailAccess{
 
 	/**
 	 * INSERT INTO $tableName (Dict_word,Dict_frequency) VALUES ('$word',1)
-	 * 		ON DUPLICATE KEY UPDATE Dict_frequency = Dict_frquency + 1;
+	 * 		ON DUPLICATE KEY UPDATE Dict_frequency = Dict_frequency + 1;
 	 * UPDATE $tableName SET Dict_frequency = Dict_frequency  + 1 WHERE Dict_word = $sumName;
 	 * 
 	 * It's lucky that MySQL supports duplication detectation.If the word exists,Dict_frequency ++;if not, create a new record.
@@ -323,8 +324,10 @@ public class MysqlAccess implements DictAccess,MailAccess{
 	}
 	
 	/**
-	 * INSERT INTO $tableName (Dict_word,Dict_frequency) VALUES ('$word',0)
-	 * 		ON DUPLICATE KEY UPDATE Dict_frequecy = Dict_frquency - 1; 
+	 * UPDATE $tableName SET Dict_frequency = Dict_frequency - 1 WHERE Dict_word = $word;
+	 * 
+	 * INSERT INTO $tableName (Dict_word,Dict_frequency) VALUES ('$SUM_NAME',0)
+	 * 		ON DUPLICATE KEY UPDATE Dict_frequecy = Dict_frequency - 1; 
 	 * 
 	 * It's impossible to delete a word directly.
 	 * This method only supports "frequency --"
@@ -332,15 +335,18 @@ public class MysqlAccess implements DictAccess,MailAccess{
 	 * */
 	private int delete(boolean tag,String word) {
 		String tableName = tag == true ? SPAM_DICT_TABLE_NAME : NORMAL_DICT_TABLE_NAME;
-		String deleteStatement = "INSERT INTO " + tableName + " (Dict_word, Dict_frequency) VALUES ('" + word + "', 0)"
-		  		+ "ON DUPLICATE KEY UPDATE Dict_frequency = Dict_frquency - 1";
+		String deleteWordStatement = "UPDATE " + tableName + " SET Dict_frequency = Dict_frequency - 1 WHERE Dict_word = '" + word + "'";
+		String deleteSumStatement = "INSERT INTO " + tableName + " (Dict_word, Dict_frequency) VALUES ('" + SUM_NAME + "', 0)"
+		  		+ "ON DUPLICATE KEY UPDATE Dict_frequency = Dict_frequency - 1";
 		if(debugMode)
 		{
-			System.out.println(deleteStatement);
+			System.out.println(deleteWordStatement);
+			System.out.println(deleteSumStatement);
 		}
 		try {
 			statement = conn.createStatement();
-			statement.execute(deleteStatement);
+			statement.executeUpdate(deleteWordStatement);
+			statement.executeUpdate(deleteSumStatement);
 		} catch (SQLException e) {
 			System.out.println("fail to delete " + word);
 			e.printStackTrace();
@@ -351,14 +357,19 @@ public class MysqlAccess implements DictAccess,MailAccess{
 	
 	/**
 	 * delete a list of words
+	 * DELETE FROM  $tableName WHERE Dict_frequency = 0; 
+	 * 
 	 * */
 	@Override
 	public int delete(boolean tag,List<String> word)
 	{
+		String tableName = tag == true ? SPAM_DICT_TABLE_NAME : NORMAL_DICT_TABLE_NAME;
 		Iterator<String> worditer = word.iterator();
 		conn = getConnection();
+		String deleteStatement = "DELETE FROM " + tableName +" WHERE Dict_frequency = 0";
 		try {
 			statement = conn.createStatement();
+			statement.executeUpdate(deleteStatement);
 		} catch (SQLException e) {
 			System.out.println("statement create failed when delete a list of words");
 			e.printStackTrace();
@@ -369,6 +380,7 @@ public class MysqlAccess implements DictAccess,MailAccess{
 		}
 		
 		try {
+			statement.executeUpdate(deleteStatement);
 			statement.close();
 			conn.close();
 		} catch (SQLException e) {
@@ -388,7 +400,7 @@ public class MysqlAccess implements DictAccess,MailAccess{
 	@Override
 	public int delete(long ID) {
 		conn = getConnection();
-		String deleteStatement = "DELETE FROM " + MAIL_TABLE_NAME + "WHERE Mail_id = " + ID;
+		String deleteStatement = "DELETE FROM " + MAIL_TABLE_NAME + " WHERE Mail_id = " + ID;
 		if(debugMode)
 		{
 			System.out.println(deleteStatement);

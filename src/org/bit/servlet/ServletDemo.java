@@ -45,8 +45,10 @@ public class ServletDemo extends HttpServlet {
 			if(userAccess.check(req.getParameter("user"),req.getParameter("password")))
 			{
 				out.println("<a href=\"/Anti-Spam/train.html\"> Train </a>");
-				out.println("</br>");
+				out.println("<br>");
 				out.println("<a href=\"/Anti-Spam/classify.html\"> Classify </a>");
+				out.println("<br>");
+				out.println("<a href=\"mails?action=view\"> Mails </a>");
 			}
 			else
 				out.println("<p>Permission denied.</p>");

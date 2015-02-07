@@ -26,7 +26,7 @@ public class Mails extends HttpServlet{
 	private final static int MAX = 1000; 
 
 	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		
 		resp.setContentType("text/html;charset=utf-8");
@@ -34,7 +34,20 @@ public class Mails extends HttpServlet{
 		
 		PrintWriter out = resp.getWriter();
 		out.println("<html>");
-		out.println("<head><title>Mails</title></head>");
+		out.println("<head><title>Mails</title>");
+		out.println("<script>\n"
+				+"function deletemail()\n"
+				+"{\n"
+				+	"document.form.action=\"delete\";\n"
+				+	"document.form.submit();\n"
+				+"}\n"
+				+"function untrain()\n"
+				+"{\n"
+				+	"document.form.action=\"untrain\";\n"
+				+	"document.form.submit();\n"
+				+"}\n"
+				+"</script>");
+		out.println("</head>");
 		out.println("<body>");
 		out.println("<h1>Mails</h1>");
 		out.println("<table>");
@@ -49,22 +62,23 @@ public class Mails extends HttpServlet{
 			// TODO temporarily for
 			for(int i = 0;i < MAX;i ++)
 			{
-				out.println("<tr><form>");
-				out.println("<td>");
-				out.println("<input name=\"Mail_ID\" type=\"hidden\" value="+ i +"/>");
-				out.println("<p>");
 				Mail mail = mailAccess.query(i);
-				if(mail != null)
-					out.println(mail.getContent());
+				if(mail == null)
+					continue;
+				out.println("<tr>");
+				out.println("<td>");
+				out.println("<p>");
+				
+				out.println(mail.getContent());
 				out.println("</p></td>");
 				
 				out.println("<td>");
-				
-				// TODO WRONG HERE!
-				out.println("<a href=\"delete\">Delete</a>");
-				out.println("<a href=\"untrain\">Untrain</a>");
-				out.println("</td>");
-				out.println("</form></tr>");
+				out.println("<form name=\"form\" method=\"post\">");
+				out.println("<input name=\"Mail_ID\" type=\"hidden\" value="+ i +" />");
+				out.println("<input type=\"button\" name=\"delete\" value=\"Delete\" onclick=\"form.action='delete';form.submit();\"/>");
+				out.println("<input type=\"button\" name=\"untrain\" value=\"Untrain\" onclick=\"form.action='untrain';form.submit();\"/>");
+				out.println("</form></td>");
+				out.println("</tr>");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -73,6 +87,7 @@ public class Mails extends HttpServlet{
 		out.println("</table>");
 		out.println("</body>");
 		out.println("</html>");
+		
 		
 	}
 
