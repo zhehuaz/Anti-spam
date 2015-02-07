@@ -497,6 +497,7 @@ public class MysqlAccess implements DictAccess,MailAccess{
 		return mail;
 	}
 	
+	@Override
 	public ResultSet query(String execuStatement) throws SQLException{
 		conn = getConnection();
 		if(debugMode)

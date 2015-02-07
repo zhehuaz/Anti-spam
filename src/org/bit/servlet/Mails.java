@@ -2,6 +2,7 @@ package org.bit.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javax.servlet.ServletException;
@@ -21,9 +22,6 @@ import org.bit.mail.Mail;
  * */
 
 public class Mails extends HttpServlet{
-
-	//TODO temperarily MAX
-	private final static int MAX = 1000; 
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -58,23 +56,24 @@ public class Mails extends HttpServlet{
 
 		try {
 			MailAccess mailAccess = new MysqlAccess(getServletContext().getRealPath("/sqlInfo.ini"));
-		
-			// TODO temporarily for
-			for(int i = 0;i < MAX;i ++)
+			ResultSet rs = mailAccess.query("SELECT * FROM Mail");
+
+			while(rs.next())
 			{
-				Mail mail = mailAccess.query(i);
-				if(mail == null)
-					continue;
+				
 				out.println("<tr>");
 				out.println("<td>");
+				out.print("<font"
+						+ (rs.getBoolean("Mail_tag") ? " color=\"red\" ":"") + ">" 
+						);
 				out.println("<p>");
 				
-				out.println(mail.getContent());
-				out.println("</p></td>");
+				out.println(rs.getString("Mail_content"));
+				out.println("</p></font></td>");
 				
 				out.println("<td>");
 				out.println("<form name=\"form\" method=\"post\">");
-				out.println("<input name=\"Mail_ID\" type=\"hidden\" value="+ i +" />");
+				out.println("<input name=\"Mail_ID\" type=\"hidden\" value="+ rs.getLong("Mail_id") +"  />");
 				out.println("<input type=\"button\" name=\"delete\" value=\"Delete\" onclick=\"form.action='delete';form.submit();\"/>");
 				out.println("<input type=\"button\" name=\"untrain\" value=\"Untrain\" onclick=\"form.action='untrain';form.submit();\"/>");
 				out.println("</form></td>");

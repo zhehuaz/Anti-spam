@@ -1,6 +1,7 @@
 package org.bit.servlet;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.SQLException;
 
 import javax.servlet.ServletException;
@@ -23,14 +24,16 @@ public class Delete extends HttpServlet{
 			throws ServletException, IOException {
 		resp.setContentType("text/html;charset=UTF-8");
 		req.setCharacterEncoding("UTF-8");
-	
+		PrintWriter out = resp.getWriter();
+		
 		try {
 			trainer = new Trainer("com.mysql.jdbc.Driver",getServletContext().getRealPath("/sqlInfo.ini"),
 					getServletContext().getRealPath("/sqlInfo.ini"));
 			long id = Long.parseLong(req.getParameter("Mail_ID"));
 			trainer.untrain(id);
 			new MysqlAccess(getServletContext().getRealPath("/sqlInfo.ini")).delete(id);
-			resp.getWriter().println("Delete Success!");
+			out.println("Delete Success!");
+			out.println("<a href=\"mails?action=view\">");
 			
 		} catch (UnknownDBException | SQLException e) {
 			e.printStackTrace();
