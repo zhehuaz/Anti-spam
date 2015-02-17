@@ -1,5 +1,6 @@
 package org.bit.conn;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 
 import org.bit.mail.Mail;
@@ -16,9 +17,9 @@ public interface MailAccess extends DatabaseAccess{
 
 	enum MailDataIndex {BLANK, INDEX_ID, INDEX_CONTENT, INDEX_TAG};
 	
-	public int createTableMail();
-	public Mail query(long ID);
-	public int delete(long ID);
-	public int insert(Mail mail);
+	public int createTableMail() throws SQLException;
+	public Mail query(long ID) throws SQLException;
+	public int delete(long ID) throws SQLException;
+	public int insert(Mail mail) throws SQLException;
 	
 }

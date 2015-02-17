@@ -112,8 +112,9 @@ public class Classifyer {
 	
 	/** Classify the Mail
 	 * @return <code>TRUE</code> means the mail is spam
+	 * @throws SQLException 
 	 * */
-	public boolean classify(Mail mail)
+	public boolean classify(Mail mail) throws SQLException
 	{
 		// TODO train the dic after classify a mail 
 		mail.parseText();

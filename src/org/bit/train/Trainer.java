@@ -44,8 +44,9 @@ public class Trainer {
 	 * train with a mail but can optional save it
 	 * @param mail is intend for training
 	 * @return number of words in mail
+	 * @throws SQLException 
 	 * */
-	public int train(Mail mail,boolean isSave)
+	public int train(Mail mail,boolean isSave) throws SQLException
 	{
 		mail.parseText();//remember to parse !!!
 		dictAccess.insert(mail.isSpam(),mail.getWordlist());
@@ -56,14 +57,15 @@ public class Trainer {
 	
 	/** If the classify result is incorrect,undo the train...
 	 * @param mail REMEBER mail's tag is OLD tag,before retrain.
+	 * @throws SQLException 
 	 * */
-	public int untrain(Mail mail)
+	public int untrain(Mail mail) throws SQLException
 	{
 		dictAccess.delete(mail.isSpam(), mail.getWordlist());
 		return 0;
 	}
 	
-	public int untrain(long id){
+	public int untrain(long id) throws SQLException{
 		Mail mail = mailAccess.query(id);
 		mail.parseText();
 		untrain(mail);

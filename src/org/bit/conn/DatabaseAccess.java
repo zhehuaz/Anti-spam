@@ -5,7 +5,7 @@ import java.sql.SQLException;
 
 public interface DatabaseAccess {
 
-	public int createDatabase();
+	public int createDatabase() throws SQLException;
 
 	public ResultSet query(String statement) throws SQLException; 
 	

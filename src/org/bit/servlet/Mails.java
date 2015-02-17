@@ -14,6 +14,8 @@ import org.bit.conn.MailAccess;
 import org.bit.conn.MysqlAccess;
 import org.bit.mail.Mail;
 
+import com.mysql.jdbc.exceptions.MySQLSyntaxErrorException;
+
 
 /**
  * Show mails in the database
@@ -30,6 +32,9 @@ public class Mails extends HttpServlet{
 		resp.setContentType("text/html;charset=utf-8");
 		req.setCharacterEncoding("utf-8");
 		
+		MailAccess mailAccess;
+		ResultSet rs;
+
 		PrintWriter out = resp.getWriter();
 		out.println("<html>");
 		out.println("<head><title>Mails</title>");
@@ -48,16 +53,17 @@ public class Mails extends HttpServlet{
 		out.println("</head>");
 		out.println("<body>");
 		out.println("<h1>Mails</h1>");
-		out.println("<table>");
-		out.println("<tr>");
-		out.println("<th>Mails</th>");
-		out.println("<th>Operations</th>");
-		out.println("</tr>");
 
 		try {
-			MailAccess mailAccess = new MysqlAccess(getServletContext().getRealPath("/sqlInfo.ini"));
-			ResultSet rs = mailAccess.query("SELECT * FROM Mail");
 
+			mailAccess = new MysqlAccess(getServletContext().getRealPath("/sqlInfo.ini"));
+			rs = mailAccess.query("SELECT * FROM Mail");
+		
+			out.println("<table>");
+			out.println("<tr>");
+			out.println("<th>Mails</th>");
+			out.println("<th>Operations</th>");
+			out.println("</tr>");
 			while(rs.next())
 			{
 				
@@ -78,12 +84,19 @@ public class Mails extends HttpServlet{
 				out.println("<input type=\"button\" name=\"untrain\" value=\"Untrain\" onclick=\"form.action='untrain';form.submit();\"/>");
 				out.println("</form></td>");
 				out.println("</tr>");
+				out.println("</table>");
 			}
-		} catch (SQLException e) {
+
+		} catch (MySQLSyntaxErrorException e) {
+			// show database state to front-end
+			e.printStackTrace(out);
+			e.printStackTrace();
+		} catch (SQLException e){
+			e.printStackTrace(out);
 			e.printStackTrace();
 		}
+
 		
-		out.println("</table>");
 		out.println("</body>");
 		out.println("</html>");
 		

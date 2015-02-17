@@ -33,6 +33,7 @@ public class MysqlAccess implements DictAccess,MailAccess{
 	final static private int ERROR_CODE_TALBE_NOT_EXISTED = 1051;
 	final static private int ERROR_CODE_TABLE_ALREADY_EXISTED = 1050;
 	
+	final static private String DATABASE_NAME = "Spam_Data";
 	final static private String SPAM_DICT_TABLE_NAME = "Spam_Dictionary";
 	final static private String NORMAL_DICT_TABLE_NAME = "Normal_Dictionary";
 	final static private String MAIL_TABLE_NAME = "Mail";
@@ -64,8 +65,7 @@ public class MysqlAccess implements DictAccess,MailAccess{
 			throw new SQLException();
 	}
 	
-	public Connection getConnection()
-	{
+	public Connection getConnection() throws SQLException{
 		try {
 			Class.forName(DRIVER);
 		} catch (ClassNotFoundException e) {
@@ -76,28 +76,27 @@ public class MysqlAccess implements DictAccess,MailAccess{
 			if(debugMode)
 				System.out.println("Database connection success");	
 		} catch (SQLException e) {
-			e.printStackTrace();
+			createDatabase();
+			//e.printStackTrace();
 		}
 		return conn;
 	}
 	
 	/**
 	 * CREATE DATABASE Spam_Data
+	 * 
+	 * You need root privilege to execute database creating.
 	 * */
 	@Override
-	public int createDatabase() {		
+	public int createDatabase() throws SQLException{		
 		Connection conn = getConnection();
-		String createStatement = "CREATE DATABASE Spam_Data";
+		String createStatement = "CREATE DATABASE " + DATABASE_NAME;
 		if(debugMode)
 			System.out.println(createStatement);
-		try {
-			statement = conn.createStatement();
-			statement.executeUpdate(createStatement);
-			statement.close();
-			conn.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		statement = conn.createStatement();
+		statement.executeUpdate(createStatement);
+		statement.close();
+		conn.close();
 		return 0;
 	}
 	
@@ -120,9 +119,10 @@ public class MysqlAccess implements DictAccess,MailAccess{
 	 * INSERT INTO $NormalTableName (Dict_word, Dict_frequency) values($sumName, 0);
 	 * 
 	 * the first item contains the sum frequency of all words
+	 * @throws SQLException 
 	 * */
 	@Override
-	public int createTableDict() {
+	public int createTableDict() throws SQLException {
 		
 		Connection conn = getConnection();
 		String createSpamDictStatement = "CREATE TABLE IF NOT EXISTS " + SPAM_DICT_TABLE_NAME
@@ -170,9 +170,10 @@ public class MysqlAccess implements DictAccess,MailAccess{
 	 * 		Mail_tag BOOL,
 	 * 		PRIMARY KEY(Mail_id)
 	 * )DEFAULT CHARSET=utf8;
+	 * @throws SQLException 
 	 * */
 	@Override
-	public int createTableMail() {		
+	public int createTableMail() throws SQLException {		
 		Connection conn = getConnection();
 		String createStatement = "CREATE TABLE IF NOT EXISTS " + MAIL_TABLE_NAME +" (" + 
 				"Mail_id INT(12) AUTO_INCREMENT,"+
@@ -206,9 +207,10 @@ public class MysqlAccess implements DictAccess,MailAccess{
 	 * @param isInsert whether to insert a new word if not exists in database
 	 * @param wordlist words prepared to query
 	 * @return a hashmap of <word,frequency>,and includes SUM item 
+	 * @throws SQLException 
 	 * */
 	@Override
-	public HashMap<String, Integer> query(boolean tag, boolean isInsert, List<String> wordlist) {
+	public HashMap<String, Integer> query(boolean tag, boolean isInsert, List<String> wordlist) throws SQLException {
 		Connection conn = getConnection();
 		wordlist.add(SUM_NAME);
 		Iterator<String> worditer = wordlist.iterator();
@@ -294,9 +296,10 @@ public class MysqlAccess implements DictAccess,MailAccess{
 
 	/**
 	 * Insert a list of words.
+	 * @throws SQLException 
 	 * */
 	@Override
-	public int insert(boolean tag,List<String> word)
+	public int insert(boolean tag,List<String> word) throws SQLException
 	{
 		Iterator<String> worditer = word.iterator();
 		conn = getConnection();
@@ -358,10 +361,11 @@ public class MysqlAccess implements DictAccess,MailAccess{
 	/**
 	 * delete a list of words
 	 * DELETE FROM  $tableName WHERE Dict_frequency = 0; 
+	 * @throws SQLException 
 	 * 
 	 * */
 	@Override
-	public int delete(boolean tag,List<String> word)
+	public int delete(boolean tag,List<String> word) throws SQLException
 	{
 		String tableName = tag == true ? SPAM_DICT_TABLE_NAME : NORMAL_DICT_TABLE_NAME;
 		Iterator<String> worditer = word.iterator();
@@ -396,9 +400,10 @@ public class MysqlAccess implements DictAccess,MailAccess{
 	 * 
 	 * Mail database
 	 * delete method should avoid user from missing to delete words in words_dict. 
+	 * @throws SQLException 
 	 * */
 	@Override
-	public int delete(long ID) {
+	public int delete(long ID) throws SQLException {
 		conn = getConnection();
 		String deleteStatement = "DELETE FROM " + MAIL_TABLE_NAME + " WHERE Mail_id = " + ID;
 		if(debugMode)
@@ -426,9 +431,10 @@ public class MysqlAccess implements DictAccess,MailAccess{
 	 * 
 	 * ATTENTION: In the database, ($author, $subject, $date) of Email is not stored.
 	 * insert a mail into mail table
+	 * @throws SQLException 
 	 * */
 	@Override
-	public int insert(Mail mail) {
+	public int insert(Mail mail) throws SQLException {
 		conn = getConnection();
 		String insertStatement = "INSERT INTO "+ MAIL_TABLE_NAME + " (Mail_content, Mail_tag) values(\n" + 
 				"'" + mail.getContent() + "',\n"
@@ -461,9 +467,10 @@ public class MysqlAccess implements DictAccess,MailAccess{
 	 * SELECT * FROM $table WHERE Mail_id = $ID;
 	 * 
 	 * search a mail from database by ID
+	 * @throws SQLException 
 	 * */
 	@Override
-	public Mail query(long ID) {
+	public Mail query(long ID) throws SQLException {
 		conn = getConnection();
 		String queryStatement = "SELECT * FROM " + MAIL_TABLE_NAME + " WHERE Mail_id = " + ID;
 		Mail mail = null;
