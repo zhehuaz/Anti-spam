@@ -12,6 +12,7 @@ import java.util.Properties;
 
 import org.bit.mail.Email;
 import org.bit.mail.Mail;
+import org.bit.util.GlobalConstants;
 
 public class DatabaseTest {
 
@@ -23,7 +24,7 @@ public class DatabaseTest {
 	 * */
 	public static void main(String [] args) throws SQLException, FileNotFoundException, IOException
 	{
-		MysqlAccess ma = new MysqlAccess("sqlInfo.ini");
+		MysqlAccess ma = new MysqlAccess(GlobalConstants.SQL_CONFIG_PATH);
 		/*HashMap<String,Integer> frequency;
 		ma.createTableDict();
 		ma.createTableMail();

@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.bit.conn.MailAccess;
 import org.bit.conn.MysqlAccess;
 import org.bit.mail.Mail;
+import org.bit.util.GlobalConstants;
 
 import com.mysql.jdbc.exceptions.MySQLSyntaxErrorException;
 
@@ -56,7 +57,7 @@ public class Mails extends HttpServlet{
 
 		try {
 
-			mailAccess = new MysqlAccess(getServletContext().getRealPath("/sqlInfo.ini"));
+			mailAccess = new MysqlAccess(getServletContext().getRealPath(GlobalConstants.SQL_CONFIG_PATH));
 			rs = mailAccess.query("SELECT * FROM Mail");
 		
 			out.println("<table>");

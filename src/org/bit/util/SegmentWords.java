@@ -1,7 +1,9 @@
 package org.bit.util;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Properties;
 
 import org.lionsoul.jcseg.core.ADictionary;
 import org.lionsoul.jcseg.core.DictionaryFactory;
@@ -13,7 +15,8 @@ import org.lionsoul.jcseg.core.SegmentFactory;
 
 public class SegmentWords{
 	
-	private final static String propPath = "/home/langley/Install/apache-tomcat-8.0.17/webapps/Anti-Spam/WEB-INF/lib/jcseg.properties";
+	private static String propPath;
+	private final static String jcsegKey = "jcsegPropPath";
 	
 	public static void trim(String sentence){
 		//TODO to cut tags and '\n'
@@ -24,6 +27,10 @@ public class SegmentWords{
 	 * */
 	public static ArrayList<String> segment(String sentence) throws JcsegException, IOException{
 		trim(sentence);
+		
+		Properties prop = new Properties();
+		prop.load(new FileInputStream(GlobalConstants.SQL_CONFIG_PATH));
+		propPath = prop.getProperty(jcsegKey);
 		ArrayList<String> words = new ArrayList<String>();
 		JcsegTaskConfig config = new JcsegTaskConfig(propPath);
 		ADictionary dic = DictionaryFactory.createDefaultDictionary(config);

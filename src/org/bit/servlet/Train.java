@@ -16,6 +16,7 @@ import org.bit.mail.Email;
 import org.bit.mail.Mail;
 import org.bit.train.Trainer;
 import org.bit.train.UnknownDBException;
+import org.bit.util.GlobalConstants;
 
 public class Train extends HttpServlet{
 	Trainer trainer;
@@ -29,8 +30,8 @@ public class Train extends HttpServlet{
 		req.setCharacterEncoding("UTF-8");
 		
 		try {
-			trainer = new Trainer("com.mysql.jdbc.Driver",getServletContext().getRealPath("/sqlInfo.ini"),
-					getServletContext().getRealPath("/sqlInfo.ini"));
+			trainer = new Trainer("com.mysql.jdbc.Driver",getServletContext().getRealPath(GlobalConstants.SQL_CONFIG_PATH),
+					getServletContext().getRealPath(GlobalConstants.SQL_CONFIG_PATH));
 			mail = new Email();
 			String str = req.getParameter("content");
 			System.out.println(str);

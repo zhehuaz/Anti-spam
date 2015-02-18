@@ -14,6 +14,7 @@ import org.bit.conn.MysqlAccess;
 import org.bit.mail.Email;
 import org.bit.mail.Mail;
 import org.bit.train.UnknownDBException;
+import org.bit.util.GlobalConstants;
 
 public class Classify extends HttpServlet{
 
@@ -27,7 +28,7 @@ public class Classify extends HttpServlet{
 		req.setCharacterEncoding("UTF-8");
 	
 		try {
-			classifyer = new Classifyer("com.mysql.jdbc.Driver", getServletContext().getRealPath("/sqlInfo.ini"));
+			classifyer = new Classifyer("com.mysql.jdbc.Driver", getServletContext().getRealPath(GlobalConstants.SQL_CONFIG_PATH));
 			Mail mail = new Email();
 			mail.setContent(req.getParameter("content"));
 			if(classifyer.classify(mail))

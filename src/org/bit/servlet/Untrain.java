@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.bit.conn.MysqlAccess;
 import org.bit.train.Trainer;
 import org.bit.train.UnknownDBException;
+import org.bit.util.GlobalConstants;
 
 public class Untrain extends HttpServlet{
 	
@@ -26,8 +27,8 @@ public class Untrain extends HttpServlet{
 		req.setCharacterEncoding("UTF-8");
 	
 		try {
-			trainer = new Trainer("com.mysql.jdbc.Driver",getServletContext().getRealPath("/sqlInfo.ini"),
-					getServletContext().getRealPath("/sqlInfo.ini"));
+			trainer = new Trainer("com.mysql.jdbc.Driver",getServletContext().getRealPath(GlobalConstants.SQL_CONFIG_PATH),
+					getServletContext().getRealPath(GlobalConstants.SQL_CONFIG_PATH));
 			long id = Long.parseLong(req.getParameter("Mail_ID"));
 			trainer.untrain(id);
 			resp.getWriter().println("Untrain Success!");

@@ -22,6 +22,23 @@ Bayes Method
 * Further more,we assume <img src="http://latex.codecogs.com/gif.latex?P(S)=50\%" title="P(S)=50\%" />, so the formula above can be simplified as:
 ><img src="http://latex.codecogs.com/gif.latex?P&space;=&space;\frac{\prod&space;P(S|w_{i})}{\prod&space;P(S|w_{i})&space;&plus;&space;\prod&space;(1&space;-&space;P(S|w_{i}))}" title="P = \frac{\prod P(S|w_{i})}{\prod P(S|w_{i}) + \prod (1 - P(S|w_{i}))}" />	
 
-* I'm using this formula to detect emails in this program.
+* I'm using this formula to detect emails in the program.
 
 Here are more details of [spam filtering](http://www.paulgraham.com/spam.html) ,fundamental knowledge of [Combining Probability](http://www.mathpages.com/home/kmath267.htm) and [Bayes theorem](http://en.wikipedia.org/wiki/Bayes%27_theorem).
+
+How To Use
+---
+* You need firstly include all the libs above to compile this program.Yet if you only uses in Tomcat, mysql connection tool and jcseg are already included in `/Anti-Spam/WEB-INF/lib` path on Tomcat. 
+
+* `webapps` files of Tomcat are in '/webapps',copy '/webapps/Anti-Spam' folder to `$TomcatPath/webapps/` of your Tomcat Installation Path.(attention, `/webapps` may not be the latest version)
+
+* Before you use it,create a file named 'sqlInfo.ini'(file name defined in `org.bit.util.GlobalConstants.java`),in which all init infomation is defined.Here are some necessary items.  
+
+		url = jdbc:mysql://localhost:3306/test
+		user = langley
+		password = 123456
+		jcsegPropPath = /Anti-Spam/WEB-INF/lib/jcseg.properties #or use absolute path
+	
+* Run in Tomcat
+		
+

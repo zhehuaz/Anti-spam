@@ -9,9 +9,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.tomcat.jni.Global;
 import org.bit.conn.MysqlAccess;
 import org.bit.train.Trainer;
 import org.bit.train.UnknownDBException;
+import org.bit.util.GlobalConstants;
 
 public class Delete extends HttpServlet{
 	/**
@@ -27,8 +29,8 @@ public class Delete extends HttpServlet{
 		PrintWriter out = resp.getWriter();
 		
 		try {
-			trainer = new Trainer("com.mysql.jdbc.Driver",getServletContext().getRealPath("/sqlInfo.ini"),
-					getServletContext().getRealPath("/sqlInfo.ini"));
+			trainer = new Trainer("com.mysql.jdbc.Driver",getServletContext().getRealPath(GlobalConstants.SQL_CONFIG_PATH),
+					getServletContext().getRealPath(GlobalConstants.SQL_CONFIG_PATH));
 			long id = Long.parseLong(req.getParameter("Mail_ID"));
 			trainer.untrain(id);
 			new MysqlAccess(getServletContext().getRealPath("/sqlInfo.ini")).delete(id);
