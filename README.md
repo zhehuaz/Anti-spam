@@ -39,6 +39,6 @@ How To Use
 		password = 123456
 		jcsegPropPath = /Anti-Spam/WEB-INF/lib/jcseg.properties #or use absolute path
 	
-* Run in Tomcat
+* Run in Tomcat.
 		
 
